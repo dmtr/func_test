@@ -17,3 +17,11 @@ class DataSetForm(forms.Form):
         except:
             raise forms.ValidationError("JSON is not valid")
         return j
+
+
+class StartCalculationForm(forms.Form):
+
+    start = forms.BooleanField(
+        initial=1,
+        widget=widgets.HiddenInput
+    )
