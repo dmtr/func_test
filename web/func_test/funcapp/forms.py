@@ -1,10 +1,14 @@
 import json
 from django import forms
+from django.forms import widgets
 
 
 class DataSetForm(forms.Form):
 
-    dataset = forms.CharField(max_length=2048)
+    dataset = forms.CharField(
+        max_length=2048,
+        widget=widgets.Textarea
+    )
 
     def clean_dataset(self):
         j = self.cleaned_data['dataset']
