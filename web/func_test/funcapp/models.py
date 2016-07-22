@@ -1,5 +1,14 @@
 from django.db import models
 
+NEW = 'NEW'
+INPROGRESS = 'INPROGRESS'
+DONE = 'DONE'
+STATUS_CHOICES = (
+    (NEW, NEW),
+    (INPROGRESS, INPROGRESS),
+    (DONE, DONE)
+)
+
 
 class DataSet(models.Model):
 
@@ -12,22 +21,35 @@ class DataSet(models.Model):
         return '{id}'.format(id=self.id)
 
 
-class TestRun(models.Model):
-
-    NEW = 'NEW'
-    INPROGRESS = 'INPROGRESS'
-    DONE = 'DONE'
-    STATUS_CHOICES = (
-        (NEW, NEW),
-        (INPROGRESS, INPROGRESS),
-        (DONE, DONE)
-    )
+class TestSuite(models.Model):
 
     status = models.CharField(
-        max_length=2048,
+        max_length=40,
         choices=STATUS_CHOICES,
         default=NEW,
         db_index=True
+    )
+
+    datasets = models.ManyToManyField(DataSet)
+
+    created = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    def __str__(self):
+        return '{o.id} {o.datasets}'.format(o=self)
+
+
+class TestRun(models.Model):
+
+    status = models.CharField(
+        max_length=40,
+        choices=STATUS_CHOICES,
+        default=NEW,
+        db_index=True
+    )
+
+    testsuite = models.ForeignKey(
+        'TestSuite',
+        on_delete=models.CASCADE
     )
 
     dataset = models.ForeignKey(
@@ -36,6 +58,9 @@ class TestRun(models.Model):
     )
 
     created = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    def __str__(self):
+        return '{o.id} {o.testsuite} {o.dataset}'.format(o=self)
 
 
 class Result(models.Model):
