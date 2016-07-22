@@ -1,6 +1,8 @@
-
-<form action="/adddataset/" method="post">
+{% extends 'funcapp/base.html' %}
+{% block content %}
+<form action="{% url 'funcapp:adddataset' %}" method="post">
     {% csrf_token %}
     {{ form }}
     <input type="submit" value="Submit" />
 </form>
+{% endblock %}
