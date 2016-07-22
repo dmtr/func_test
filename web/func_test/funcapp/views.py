@@ -2,11 +2,15 @@ import logging
 import json
 
 from django.contrib import messages
+from django.db import transaction
 from django.shortcuts import render
 from django.views.decorators.http import require_http_methods
 
 from funcapp.forms import DataSetForm
+from funcapp.forms import StartCalculationForm
 from funcapp.models import DataSet
+from funcapp.models import TestSuite
+from funcapp.models import TestRun
 
 logger = logging.getLogger(__name__)
 
@@ -30,3 +34,21 @@ def add_dataset(request):
         form = DataSetForm()
 
     return render(request, 'funcapp/adddataset.html', {'form': form})
+
+
+@require_http_methods(['GET', 'POST'])
+def calculate_all(request):
+    if request.method == 'POST':
+        form = StartCalculationForm(request.POST)
+        if form.is_valid():
+            with transaction.atomic():
+                test_suite = TestSuite.objects.create()
+                for ds in DataSet.objects.all():
+                    test_suite.datasets.add(ds)
+                    TestRun.objects.create(testsuite=test_suite, dataset=ds)
+
+            messages.info(request, 'Расчет запущен')
+    else:
+        form = StartCalculationForm()
+
+    return render(request, 'funcapp/calc.html', {'form': form})

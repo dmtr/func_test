@@ -13,6 +13,7 @@
 {% block body %}
 <ul>
     <li><a href="{% url 'funcapp:adddataset' %}">Добавить набор данных</a></li>
+    <li><a href="{% url 'funcapp:calculateall' %}">Запустить расчет</a></li>
 </ul>
 
 {% if messages %}

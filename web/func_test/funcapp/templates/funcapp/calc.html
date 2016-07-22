@@ -1,0 +1,8 @@
+{% extends 'funcapp/base.html' %}
+{% block content %}
+<form action="{% url 'funcapp:calculateall' %}" method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Начать" />
+</form>
+{% endblock %}
