@@ -3,10 +3,12 @@ from django.db import models
 NEW = 'NEW'
 INPROGRESS = 'INPROGRESS'
 DONE = 'DONE'
+ERROR = 'ERROR'
 STATUS_CHOICES = (
     (NEW, NEW),
     (INPROGRESS, INPROGRESS),
-    (DONE, DONE)
+    (DONE, DONE),
+    (ERROR, ERROR)
 )
 
 
@@ -59,6 +61,8 @@ class TestRun(models.Model):
 
     created = models.DateTimeField(auto_now_add=True, db_index=True)
 
+    exception = models.TextField('Error Description', null=True)
+
     def __str__(self):
         return '{o.id} {o.testsuite} {o.dataset}'.format(o=self)
 
@@ -79,11 +83,7 @@ class Result(models.Model):
         max_length=20
         )
 
-    error = models.BooleanField(default=False, db_index=True)
-
-    exception = models.TextField('Error Description', null=True)
-
-    created = models.DateTimeField(auto_now_add=True, db_index=True)
+    created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return '{o.dataset} {o.a} {o.b} {o.result}'.format(o=self)
