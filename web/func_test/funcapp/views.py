@@ -10,6 +10,7 @@ from funcapp.forms import StartCalculationForm
 from funcapp.models import DataSet
 from funcapp.models import TestSuite
 from funcapp.models import TestRun
+from funcapp.tasks import start_calculation
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +47,10 @@ def calculate_all(request):
                     test_suite.datasets.add(ds)
                     TestRun.objects.create(testsuite=test_suite, dataset=ds)
 
+            start_calculation.s(test_suite.id).apply_async()
             messages.info(request, 'Расчет запущен')
+        else:
+            messages.error(request, 'Что-то пошло не так')
     else:
         form = StartCalculationForm()
 
