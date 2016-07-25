@@ -1,5 +1,4 @@
 import logging
-import json
 
 from django.contrib import messages
 from django.db import transaction
@@ -27,7 +26,7 @@ def add_dataset(request):
         if form.is_valid():
             d = form.cleaned_data['dataset']
             DataSet.objects.create(
-                data=json.loads(d)
+                data=d
             )
             messages.info(request, 'Данные добавлены')
     else:
