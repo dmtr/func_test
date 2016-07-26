@@ -1,0 +1,10 @@
+{% extends 'funcapp/base.html' %}
+{% block content %}
+<table>
+ {% for r in errors %}
+ <tr>
+ <td>{{ r.dataset.data }}</td><td>{{ r.exception }}</td>
+ </tr>
+ {% endfor %}
+</table>
+{% endblock %}
