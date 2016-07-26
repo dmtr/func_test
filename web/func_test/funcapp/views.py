@@ -76,3 +76,9 @@ def results(request):
     logger.debug('Last TestSuite %s', ts)
     results = Result.objects.filter(testrun__testsuite=ts).select_related('testrun')
     return render(request, 'funcapp/results.html', {'results': results})
+
+
+@require_http_methods(['GET'])
+def errors(request):
+    errors = TestRun.objects.filter(status=ERROR).select_related('dataset')
+    return render(request, 'funcapp/errors.html', {'errors': errors})
