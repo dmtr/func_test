@@ -20,10 +20,20 @@ services:
                         - PYTHONPATH=/app/func_test
                         - DJANGO_SETTINGS_MODULE=functest.settings
                         - BROKER_URL=amqp://rabbit:rabbit@rabbit//
-                command: celery -A functest worker -E -l info --concurrency=3
+                command: celery -A functest worker -E -l debug --concurrency=3
                 depends_on:
                         - rabbit
                         - db
+
+        flower:
+                build: ./web/
+                environment:
+                        - PYTHONPATH=/app/func_test
+                        - DJANGO_SETTINGS_MODULE=functest.settings
+                        - BROKER_URL=amqp://rabbit:rabbit@rabbit//
+                command: celery flower -A functest --address=0.0.0.0 --port=5555
+                depends_on:
+                        - rabbit
 
         nginx:
                 build: ./nginx/
@@ -33,6 +43,7 @@ services:
                         - web
                 links:
                         - web:web
+                        - flower:flower
 
         db:
                 build: ./postgresql/
