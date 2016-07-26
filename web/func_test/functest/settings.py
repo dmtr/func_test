@@ -147,7 +147,7 @@ LOGGING = {
             'handlers': ['basic'],
             'level': 'DEBUG',
         },
-        'ip_app': {
+        'funcapp': {
             'handlers': ['basic'],
             'level': 'DEBUG',
             'propagate': True,
