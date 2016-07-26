@@ -1,0 +1,64 @@
+version: '2'
+services:
+        web:
+                restart: always
+                build: ./web/
+                expose:
+                        - "8000"
+                environment:
+                        - PYTHONPATH=/app/func_test
+                        - DJANGO_SETTINGS_MODULE=functest.settings_production
+                command: gunicorn functest.wsgi -c func_test/functest/gunicorn.conf.py
+                depends_on:
+                        - db
+                        - rabbit
+
+        celery:
+                restart: always
+                build: ./web/
+                environment:
+                        - PYTHONPATH=/app/func_test
+                        - DJANGO_SETTINGS_MODULE=functest.settings_production
+                        - BROKER_URL=amqp://rabbit:rabbit@rabbit//
+                command: celery -A functest worker -E -l debug --concurrency=3
+                depends_on:
+                        - rabbit
+                        - db
+
+        flower:
+                restart: always
+                build: ./web/
+                environment:
+                        - PYTHONPATH=/app/func_test
+                        - DJANGO_SETTINGS_MODULE=functest.settings_production
+                        - BROKER_URL=amqp://rabbit:rabbit@rabbit//
+                command: celery flower -A functest --address=0.0.0.0 --port=5555
+                depends_on:
+                        - rabbit
+
+        nginx:
+                restart: always
+                build: ./nginx/
+                ports:
+                        - "80:80"
+                volumes_from:
+                        - web
+                links:
+                        - web:web
+                        - flower:flower
+
+        db:
+                restart: always
+                build: ./postgresql/
+
+        rabbit:
+                restart: always
+                build: ./rabbitmq/
+                environment:
+                        RABBITMQ_ERLANG_COOKIE: "some_secret_cookie"
+                        RABBITMQ_DEFAULT_USER: "rabbit"
+                        RABBITMQ_DEFAULT_PASS: "rabbit"
+                        RABBITMQ_DEFAULT_VHOST: "/"
+                ports:
+                        - "15672:15672"
+                        - "5672:5672"
