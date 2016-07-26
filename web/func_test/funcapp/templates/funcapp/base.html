@@ -14,6 +14,9 @@
 <ul>
     <li><a href="{% url 'funcapp:adddataset' %}">Добавить набор данных</a></li>
     <li><a href="{% url 'funcapp:calculateall' %}">Запустить расчет</a></li>
+    <li><a href="{% url 'funcapp:status' %}">Статус</a></li>
+    <li><a href="{% url 'funcapp:results' %}">Результаты</a></li>
+    <li><a href="{% url 'funcapp:errors' %}">Ошибки</a></li>
 </ul>
 
 {% if messages %}
