@@ -10,9 +10,14 @@ from funcapp.forms import StartCalculationForm
 from funcapp.models import DataSet
 from funcapp.models import TestSuite
 from funcapp.models import TestRun
+from funcapp.models import Result
+from funcapp.models import DONE, ERROR
 from funcapp.tasks import start_calculation
 
 logger = logging.getLogger(__name__)
+
+NO_ERR_MSG = 'Без ошибок'
+ERR_MSG = 'С ошибками'
 
 
 @require_http_methods(['GET'])
@@ -55,3 +60,11 @@ def calculate_all(request):
         form = StartCalculationForm()
 
     return render(request, 'funcapp/calc.html', {'form': form})
+
+
+@require_http_methods(['GET'])
+def status(request):
+    ts = TestSuite.objects.filter(status__in=[DONE, ERROR]).order_by('-created')[1]
+    logger.debug('Last TestSuite %s', ts)
+    status = NO_ERR_MSG if ts.status == DONE else ERR_MSG
+    return render(request, 'funcapp/status.html', {'status': status})
