@@ -42,7 +42,7 @@ def update_db(self, results, tests):
             Result.objects.create(
                 a=d['a'],
                 b=d['b'],
-                result=result,
+                result=json.dumps(result),
                 testrun=t
             )
             not_failed.append(t)
