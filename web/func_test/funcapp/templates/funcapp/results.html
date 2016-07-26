@@ -1,0 +1,10 @@
+{% extends 'funcapp/base.html' %}
+{% block content %}
+<table>
+ {% for r in results %}
+ <tr>
+ <td>{{ r.a }}</td><td>{{ r.b }}</td><td>{{ r.result }}</td>
+ </tr>
+ {% endfor %}
+</table>
+{% endblock %}
