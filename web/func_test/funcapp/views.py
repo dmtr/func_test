@@ -68,3 +68,11 @@ def status(request):
     logger.debug('Last TestSuite %s', ts)
     status = NO_ERR_MSG if ts.status == DONE else ERR_MSG
     return render(request, 'funcapp/status.html', {'status': status})
+
+
+@require_http_methods(['GET'])
+def results(request):
+    ts = TestSuite.objects.filter(status__in=[DONE, ERROR]).order_by('-created')[1]
+    logger.debug('Last TestSuite %s', ts)
+    results = Result.objects.filter(testrun__testsuite=ts).select_related('testrun')
+    return render(request, 'funcapp/results.html', {'results': results})
